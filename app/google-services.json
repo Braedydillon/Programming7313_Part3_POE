@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "933182972399",
+    "project_id": "cacheflowauth",
+    "storage_bucket": "cacheflowauth.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:933182972399:android:50158192287ae34abbd61a",
+        "android_client_info": {
+          "package_name": "com.example.tracker"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAoiBWrsXVe_S23VjDvzpCCN_IbUYCaKTU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

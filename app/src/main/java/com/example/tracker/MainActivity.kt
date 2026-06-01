@@ -1,6 +1,5 @@
 package com.example.tracker
 
-import Data.database.AppDatabase
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -10,42 +9,41 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import com.google.firebase.auth.FirebaseAuth // 1. Added Firebase Import
 
 class MainActivity : AppCompatActivity() {
 
-    //global declarations
+    // Global declarations
     private lateinit var editTextText: EditText
     private lateinit var editTextTextPassword: EditText
     private lateinit var button: Button
     private lateinit var textView: Button
-    private lateinit var db: AppDatabase
 
+    // 2. Swapped Room Database for Firebase Auth
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_main)// Ensure this layout matches your activity_main setup
 
-        db = AppDatabase.getDatabase(this)
+        // 3. Initialize Firebase Auth instance
+        auth = FirebaseAuth.getInstance()
 
         editTextText = findViewById(R.id.editTextText)
         editTextTextPassword = findViewById(R.id.editTextTextPassword)
         button = findViewById(R.id.button)
         textView = findViewById(R.id.textView)
 
-
         button.setOnClickListener {
             loginUser()
         }
 
         textView.setOnClickListener {
+            // Switches over to your register view
             val intent = Intent(this, Register::class.java)
             startActivity(intent)
         }
-
-
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -58,42 +56,34 @@ class MainActivity : AppCompatActivity() {
         val username = editTextText.text.toString().trim()
         val password = editTextTextPassword.text.toString().trim()
 
-
-        //Validation checks
+        // Validation checks
         if (username.isEmpty() || password.isEmpty()) {
-            Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT)
-                .show()
+            Toast.makeText(this, "Please enter both username and password", Toast.LENGTH_SHORT).show()
             return
         }
 
-        lifecycleScope.launch {
-            //check if user exists with matching username and password
-            val foundUser = db.userDao().loginUser(username, password)
+        // 4. Firebase Authentication handles background threads natively
+        auth.signInWithEmailAndPassword(username, password)
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful) {
+                    // Login successful!
+                    Toast.makeText(this, "Login Successful", Toast.LENGTH_SHORT).show()
 
-            runOnUiThread {
-                if (foundUser != null) {
-                    //if the user is found -> login successful
-                    Toast.makeText(this@MainActivity, "Login Successful", Toast.LENGTH_SHORT).show()
-
-                    //Go to the home page once successful
-                    openHomePage(foundUser.username)
-
+                    // Route directly to your home screen
+                    openHomePage(username)
                 } else {
-                    //if user not found then login failed
-                    Toast.makeText(
-                        this@MainActivity, "Invalid username or password. Please try again",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    // Login failed. Displays the exact message from Firebase (e.g. wrong password)
+                    val errorMessage = task.exception?.message ?: "Invalid username or password."
+                    Toast.makeText(this, "Login Failed: $errorMessage", Toast.LENGTH_SHORT).show()
                 }
             }
-        }
     }
 
     private fun openHomePage(username: String) {
+        // Point this to whatever Activity acts as your main chart dashboard workspace
         val intent = Intent(this, Home::class.java)
         intent.putExtra("username", username)
         startActivity(intent)
-        finish()
+        finish() // Closes this login screen so pressing 'back' doesn't log them back out
     }
-
 }
