@@ -48,6 +48,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.database)
+
     val roomVersion = "2.8.4"
 
     implementation("androidx.room:room-runtime:$roomVersion")
@@ -55,5 +58,7 @@ dependencies {
     ksp("androidx.room:room-compiler:$roomVersion")
 
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
+
+    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
 }
