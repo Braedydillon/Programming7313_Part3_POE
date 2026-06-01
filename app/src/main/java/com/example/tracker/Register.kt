@@ -1,6 +1,5 @@
 package com.example.tracker
 
-import Data.database.AppDatabase
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
@@ -10,11 +9,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import Data.User
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.launch
 
 class Register : AppCompatActivity() {
 
@@ -26,7 +21,6 @@ class Register : AppCompatActivity() {
     private lateinit var editTextTextPassword3: EditText
     private lateinit var button2: Button
     private lateinit var button3: Button
-    private lateinit var db: AppDatabase
 
     private lateinit var auth: FirebaseAuth
 

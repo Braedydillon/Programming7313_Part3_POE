@@ -1,24 +1,25 @@
 package com.example.tracker
 
-import Data.database.AppDatabase
+import Data.Expense
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
-import android.net.Uri
-import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.launch
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import java.util.Calendar
+import java.util.Locale
 
 class Report : AppCompatActivity() {
     private lateinit var edtStartDate: EditText
@@ -27,7 +28,7 @@ class Report : AppCompatActivity() {
     private lateinit var btnFilter: Button
     private lateinit var txtTotal: TextView
     private lateinit var expensesContainer: LinearLayout
-    private lateinit var db: AppDatabase
+
 
     private lateinit var returnhome: Button
 
@@ -37,7 +38,6 @@ class Report : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_report)
 
-        db = AppDatabase.getDatabase(this)
 
         edtStartDate = findViewById(R.id.startdate)
         edtEndDate = findViewById(R.id.enddate)
@@ -81,97 +81,64 @@ class Report : AppCompatActivity() {
     private fun filterExpenses() {
         val startDate = edtStartDate.text.toString()
         val endDate = edtEndDate.text.toString()
-        val searchName = edtSearchName.text.toString().trim()
+        val searchName = edtSearchName.text.toString().trim().lowercase(Locale.getDefault())
 
-        // 1. Check if everything is empty
+        // Validation checks (kept exactly the same)
         if (startDate.isEmpty() && endDate.isEmpty() && searchName.isEmpty()) {
             Toast.makeText(this, "Please enter dates or a search term", Toast.LENGTH_SHORT).show()
             return
         }
-
-        // 2. Check if only one date is filled (preventing errors in the database query)
         if ((startDate.isNotEmpty() && endDate.isEmpty()) || (startDate.isEmpty() && endDate.isNotEmpty())) {
-            Toast.makeText(this, "Please select both start and end dates, or clear them to search only by name", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Please select both start and end dates", Toast.LENGTH_LONG).show()
             return
         }
 
-        lifecycleScope.launch {
-            // 3. Fetch from database based on whether dates were provided
-            var filteredExpenses = if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
-                db.expenseDao().getExpensesBetweenDates(startDate, endDate)
-            } else {
-                db.expenseDao().getAllExpenses() // Fallback to all expenses if dates are empty
-            }
+        // Pull from Firebase instead of Room
+        val dbRef = FirebaseDatabase.getInstance().getReference("expenses")
+        dbRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                expensesContainer.removeAllViews() // Clear old list rows from layout
+                var totalAmount = 0.0
 
-            // 4. If a search term was typed, filter the list down
-            if (searchName.isNotEmpty()) {
-                filteredExpenses = filteredExpenses.filter { expense ->
-                    expense.category.contains(searchName, ignoreCase = true) ||
-                            expense.description.contains(searchName, ignoreCase = true)
-                }
-            }
+                for (dataSnapshot in snapshot.children) {
+                    val item = dataSnapshot.getValue(Expense::class.java)
+                    if (item != null) {
 
-            // 5. Update the UI with the final list
-            runOnUiThread {
-                expensesContainer.removeAllViews()
-                if (filteredExpenses.isEmpty()) {
-                    val noDataText = TextView(this@Report).apply {
-                        text = "No expenses found matching your criteria"
-                        setTextColor(getColor(android.R.color.white))
-                        gravity = android.view.Gravity.CENTER
-                    }
-                    expensesContainer.addView(noDataText)
-                    txtTotal.text = "Total: R0.00"
-                } else {
-                    var totalAmount = 0.0
-
-                    for (expense in filteredExpenses) {
-                        val expenseView = TextView(this@Report).apply {
-                            text = "Category: ${expense.category}\n" +
-                                   "Amount: R${expense.amount}\n" +
-                                   "Date: ${expense.date}\n" +
-                                   "Description: ${expense.description}\n"
-                            setTextColor(getColor(android.R.color.white))
-                            setPadding(0, 16, 0, 8)
+                        // 1. Filter by Date range if dates are provided
+                        var matchesDate = true
+                        if (startDate.isNotEmpty() && endDate.isNotEmpty()) {
+                            // Simple string comparison works perfectly for YYYY-MM-DD formats
+                            matchesDate = item.date in startDate..endDate
                         }
-                        expensesContainer.addView(expenseView)
 
-                        if (!expense.photoUri.isNullOrEmpty()) {
-                            val imageView = ImageView(this@Report).apply {
-                                layoutParams = LinearLayout.LayoutParams(
-                                    LinearLayout.LayoutParams.MATCH_PARENT,
-                                    600
-                                )
-                                scaleType = ImageView.ScaleType.CENTER_INSIDE
-                                try {
-                                    val uri = Uri.parse(expense.photoUri)
-                                    // Try to open a stream to check permissions
-                                    contentResolver.openInputStream(uri)?.use {
-                                        setImageURI(uri)
-                                    } ?: run {
-                                        visibility = android.view.View.GONE
-                                    }
-                                } catch (_: Exception) {
-                                    visibility = android.view.View.GONE
-                                }
-                                setPadding(0, 0, 0, 16)
+                        // 2. Filter by Name/Category search keyword if provided
+                        var matchesName = true
+                        if (searchName.isNotEmpty()) {
+                            matchesName = item.category.lowercase(Locale.getDefault()).contains(searchName) ||
+                                    item.description.lowercase(Locale.getDefault()).contains(searchName)
+                        }
+
+                        // 3. If it passes our filters, add it to the UI view list container
+                        if (matchesDate && matchesName) {
+                            totalAmount += item.amount
+
+                            // Create a simple text view dynamically for this item row
+                            val textView = TextView(this@Report).apply {
+                                text = "${item.date} - ${item.category}: R${item.amount}\n${item.description}\n"
+                                textSize = 16f
                             }
-                            expensesContainer.addView(imageView)
+                            expensesContainer.addView(textView)
                         }
-
-                        val separator = android.view.View(this@Report).apply {
-                            layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 1)
-                            setBackgroundColor(getColor(android.R.color.darker_gray))
-                        }
-                        expensesContainer.addView(separator)
-
-                        totalAmount += expense.amount
                     }
-
-                    txtTotal.text = "Total: R%.2f".format(totalAmount)
                 }
+                // Update the grand total display text component
+                txtTotal.text = "Total: R$totalAmount"
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@Report, "Failed to load report", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 
     @SuppressLint("DefaultLocale")
