@@ -1,10 +1,12 @@
 package com.example.tracker
 
 import Data.Expense
+import Data.MonthlyGoal
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64 // ADDED
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,7 +44,7 @@ class ReportFragment : Fragment() {
         btnFilter = view.findViewById(R.id.filter)
         txtTotal = view.findViewById(R.id.Total)
         expensesContainer = view.findViewById(R.id.expensesContainer)
-        
+
         auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid ?: ""
         database = FirebaseDatabase.getInstance().getReference("users").child(userId).child("expenses")
@@ -86,8 +88,8 @@ class ReportFragment : Fragment() {
                         } else true
 
                         val matchesName = if (searchName.isNotEmpty()) {
-                            item.category.lowercase().contains(searchName) || 
-                            item.description.lowercase().contains(searchName)
+                            item.category.lowercase().contains(searchName) ||
+                                    item.description.lowercase().contains(searchName)
                         } else true
 
                         if (matchesDate && matchesName) {
@@ -109,7 +111,7 @@ class ReportFragment : Fragment() {
         val context = context ?: return
         val inflater = LayoutInflater.from(context)
         val itemView = inflater.inflate(R.layout.item_expense_report, expensesContainer, false)
-        
+
         val txtDate = itemView.findViewById<TextView>(R.id.txtDate)
         val txtCategory = itemView.findViewById<TextView>(R.id.txtCategory)
         val txtDescription = itemView.findViewById<TextView>(R.id.txtDescription)
@@ -121,11 +123,20 @@ class ReportFragment : Fragment() {
         txtDescription.text = expense.description
         txtAmount.text = String.format(Locale.getDefault(), "R%.2f", expense.amount)
 
+        // FIXED: Decode Base64 string to native byte layout structure
         if (!expense.photoUri.isNullOrEmpty()) {
-            imgExpense.visibility = View.VISIBLE
-            Glide.with(this)
-                .load(expense.photoUri)
-                .into(imgExpense)
+            try {
+                imgExpense.visibility = View.VISIBLE
+                val imageBytes = Base64.decode(expense.photoUri, Base64.DEFAULT)
+
+                Glide.with(this)
+                    .asBitmap()
+                    .load(imageBytes)
+                    .into(imgExpense)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                imgExpense.visibility = View.GONE
+            }
         } else {
             imgExpense.visibility = View.GONE
         }

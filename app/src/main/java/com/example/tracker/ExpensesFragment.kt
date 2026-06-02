@@ -3,10 +3,11 @@ package com.example.tracker
 import Data.Expense
 import Data.MonthlyGoal
 import android.app.DatePickerDialog
-import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
+import android.util.Base64
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,7 +21,8 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.storage.FirebaseStorage
+import java.io.ByteArrayOutputStream
+import java.io.InputStream
 import java.util.*
 
 class ExpensesFragment : Fragment() {
@@ -38,7 +40,6 @@ class ExpensesFragment : Fragment() {
 
     private lateinit var database: DatabaseReference
     private lateinit var auth: FirebaseAuth
-    private lateinit var storage: FirebaseStorage
     private var selectedPhotoUri: Uri? = null
 
     private val imagePickerLauncher = registerForActivityResult(
@@ -70,10 +71,7 @@ class ExpensesFragment : Fragment() {
         imgPreview = view.findViewById(R.id.imgPreview)
 
         auth = FirebaseAuth.getInstance()
-        // Reverting to default instance to use bucket from google-services.json
-        storage = FirebaseStorage.getInstance()
-        val userId = auth.currentUser?.uid ?: ""
-        database = FirebaseDatabase.getInstance().getReference("users").child(userId)
+        database = FirebaseDatabase.getInstance().getReference("users")
 
         edtDate.setOnClickListener { showDatePicker() }
         btnPhoto.setOnClickListener { imagePickerLauncher.launch("image/*") }
@@ -90,75 +88,63 @@ class ExpensesFragment : Fragment() {
         val description = edtDescription.text.toString().trim()
 
         if (category.isEmpty() || amountText.isEmpty() || date.isEmpty() || description.isEmpty()) {
-            Toast.makeText(context, "Please fill in all the required fields", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Please fill in all fields", Toast.LENGTH_SHORT).show()
             return
         }
 
         val amount = amountText.toDoubleOrNull() ?: return
-        val key = database.child("expenses").push().key ?: return
+        val userId = auth.currentUser?.uid
 
-        if (selectedPhotoUri != null) {
-            uploadImageAndSaveExpense(key, category, amount, date, description)
-        } else {
-            val expense = Expense(
-                category = category,
-                amount = amount,
-                date = date,
-                description = description,
-                photoUri = null
-            )
-            saveExpenseToDatabase(key, expense)
+        if (userId.isNullOrEmpty()) {
+            Toast.makeText(context, "Authentication failed.", Toast.LENGTH_SHORT).show()
+            return
         }
-    }
 
-    private fun uploadImageAndSaveExpense(
-        key: String,
-        category: String,
-        amount: Double,
-        date: String,
-        description: String
-    ) {
-        val userId = auth.currentUser?.uid ?: return
-        val storageRef = storage.reference.child("users/$userId/expenses/$key.jpg")
+        val key = database.child(userId).child("expenses").push().key ?: return
 
-        selectedPhotoUri?.let { uri ->
-            storageRef.putFile(uri).continueWithTask { task ->
-                if (!task.isSuccessful) {
-                    task.exception?.let { throw it }
-                }
-                storageRef.downloadUrl
-            }.addOnSuccessListener { downloadUri ->
-                if (!isAdded) return@addOnSuccessListener
-                val expense = Expense(
-                    category = category,
-                    amount = amount,
-                    date = date,
-                    description = description,
-                    photoUri = downloadUri.toString()
-                )
-                saveExpenseToDatabase(key, expense)
-            }.addOnFailureListener { e ->
-                if (isAdded) {
-                    Log.e("ExpensesFragment", "Upload failed", e)
-                    Toast.makeText(context, "Image upload failed: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-    }
+        // Convert the image to a global Base64 string if an image is selected
+        val base64ImageString = selectedPhotoUri?.let { convertUriToBase64(it) }
 
-    private fun saveExpenseToDatabase(key: String, expense: Expense) {
-        database.child("expenses").child(key).setValue(expense)
+        val expense = Expense(
+            category = category,
+            amount = amount,
+            date = date,
+            description = description,
+            photoUri = base64ImageString // This now holds the actual cloud-syncable image string!
+        )
+
+        database.child(userId).child("expenses").child(key).setValue(expense)
             .addOnSuccessListener {
                 if (isAdded) {
-                    Toast.makeText(context, "Expense saved successfully", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Expense synced globally!", Toast.LENGTH_SHORT).show()
                     clearExpenseFields()
                 }
             }
             .addOnFailureListener { e ->
                 if (isAdded) {
-                    Toast.makeText(context, "Error: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Database error: ${e.message}", Toast.LENGTH_SHORT).show()
                 }
             }
+    }
+
+    // Helper method to downscale, compress, and encode the binary file to string
+    private fun convertUriToBase64(uri: Uri): String? {
+        return try {
+            val inputStream: InputStream? = context?.contentResolver?.openInputStream(uri)
+            val originalBitmap = BitmapFactory.decodeStream(inputStream)
+
+            // Downscale to maximum 500x500 pixels to protect database performance thresholds
+            val scaledBitmap = Bitmap.createScaledBitmap(originalBitmap, 500, 500, true)
+
+            val outputStream = ByteArrayOutputStream()
+            scaledBitmap.compress(Bitmap.CompressFormat.JPEG, 70, outputStream)
+            val byteArray = outputStream.toByteArray()
+
+            Base64.encodeToString(byteArray, Base64.DEFAULT)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            null
+        }
     }
 
     private fun clearExpenseFields() {
@@ -179,18 +165,14 @@ class ExpensesFragment : Fragment() {
             return
         }
 
+        val userId = auth.currentUser?.uid ?: return
         val goal = MonthlyGoal(minGoal = minGoal, maxGoal = maxGoal)
-        database.child("goals").setValue(goal)
+
+        database.child(userId).child("goals").setValue(goal)
             .addOnSuccessListener {
                 if (isAdded) {
-                    Toast.makeText(context, "Goals saved successfully", Toast.LENGTH_SHORT).show()
-                    // Also update the monthlyGoal for HomeFragment balance calculation
-                    database.child("settings").child("monthlyGoal").setValue(maxGoal)
-                }
-            }
-            .addOnFailureListener { e ->
-                if (isAdded) {
-                    Toast.makeText(context, "Error saving goals: ${e.message}", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Goals updated successfully!", Toast.LENGTH_SHORT).show()
+                    database.child(userId).child("settings").child("monthlyGoal").setValue(maxGoal)
                 }
             }
     }

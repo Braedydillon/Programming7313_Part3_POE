@@ -4,6 +4,7 @@ import Data.Expense
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Base64 // ADDED
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -43,7 +44,7 @@ class HomeFragment : Fragment() {
         progressBar = view.findViewById(R.id.goal_progress_bar)
         pieChart = view.findViewById(R.id.pieChart)
         recentActivityContainer = view.findViewById(R.id.recent_activity_container)
-        
+
         view.findViewById<View>(R.id.card_pie_chart).setOnClickListener {
             (activity as? Home)?.navigateToReport()
         }
@@ -80,7 +81,7 @@ class HomeFragment : Fragment() {
                 if (!isAdded) return
 
                 val monthlyGoal = snapshot.child("settings").child("monthlyGoal").getValue(Double::class.java) ?: 0.0
-                
+
                 val expenses = mutableListOf<Expense>()
                 snapshot.child("expenses").children.forEach {
                     it.getValue(Expense::class.java)?.let { exp -> expenses.add(exp) }
@@ -95,9 +96,9 @@ class HomeFragment : Fragment() {
     private fun updateDashboardUI(monthlyGoal: Double, expenses: List<Expense>) {
         val totalExpenses = expenses.sumOf { it.amount }
         val balance = monthlyGoal - totalExpenses
-        
+
         tvBalance.text = String.format(Locale.getDefault(), "R%.2f", balance)
-        
+
         if (monthlyGoal > 0) {
             val progress = ((totalExpenses / monthlyGoal) * 100).toInt()
             progressBar.progress = progress.coerceAtMost(100)
@@ -143,23 +144,32 @@ class HomeFragment : Fragment() {
         val itemView = inflater.inflate(R.layout.item_expense_report, recentActivityContainer, false)
         itemView.findViewById<TextView>(R.id.txtDate).text = expense.date
         itemView.findViewById<TextView>(R.id.txtCategory).text = expense.category
-        itemView.findViewById<TextView>(R.id.txtDescription).text = expense.description
+        itemView.findViewById<TextView>(R.id.txtDescription).text =expense.description
         itemView.findViewById<TextView>(R.id.txtAmount).text = String.format(Locale.getDefault(), "R%.2f", expense.amount)
-        
+
         val img = itemView.findViewById<ImageView>(R.id.imgExpense)
+
+        // FIXED: Decode string byte layouts for dashboard recent list items natively
         if (!expense.photoUri.isNullOrEmpty()) {
-            img.visibility = View.VISIBLE
-            // Fixed height for dashboard preview
-            val heightInPx = (120 * resources.displayMetrics.density).toInt()
-            img.layoutParams.height = heightInPx
-            
-            Glide.with(this)
-                .load(expense.photoUri)
-                .into(img)
+            try {
+                img.visibility = View.VISIBLE
+                val heightInPx = (120 * resources.displayMetrics.density).toInt()
+                img.layoutParams.height = heightInPx
+
+                val imageBytes = Base64.decode(expense.photoUri, Base64.DEFAULT)
+
+                Glide.with(this)
+                    .asBitmap()
+                    .load(imageBytes)
+                    .into(img)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                img.visibility = View.GONE
+            }
         } else {
             img.visibility = View.GONE
         }
-        
+
         recentActivityContainer.addView(itemView)
     }
 }
