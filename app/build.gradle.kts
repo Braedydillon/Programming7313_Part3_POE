@@ -50,6 +50,8 @@ dependencies {
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.database)
+    implementation(libs.firebase.storage)
+    implementation(libs.glide)
 
     val roomVersion = "2.8.4"
 
