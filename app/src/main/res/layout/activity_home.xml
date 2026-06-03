@@ -5,22 +5,213 @@
     android:layout_height="match_parent"
     android:background="@drawable/gradient_background">
 
+    <!-- Profile button at top right -->
+    <ImageButton
+        android:id="@+id/btn_top_profile"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@drawable/ic_profile"
+        android:elevation="10dp"
+        app:tint="@color/white"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:contentDescription="Profile" />
+
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintBottom_toTopOf="@+id/custom_bottom_nav_container"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom_navigation"
+    <HorizontalScrollView
+        android:id="@+id/custom_bottom_nav_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="64dp"
         android:background="@color/white"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:menu="@menu/bottom_nav_menu"
-        app:itemIconTint="@color/card_dark"
-        app:itemTextColor="@color/card_dark"
-        app:labelVisibilityMode="labeled" />
+        android:scrollbars="none"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:id="@+id/custom_bottom_nav"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp">
+
+            <!-- Home -->
+            <LinearLayout
+                android:id="@+id/btn_nav_home"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/iv_nav_home"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_home"
+                    app:tint="@color/card_dark" />
+                <TextView
+                    android:id="@+id/tv_nav_home"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Home"
+                    android:textSize="10sp"
+                    android:textColor="@color/card_dark"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <!-- Expenses -->
+            <LinearLayout
+                android:id="@+id/btn_nav_expenses"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/iv_nav_expenses"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_expenses"
+                    app:tint="@color/card_dark" />
+                <TextView
+                    android:id="@+id/tv_nav_expenses"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Expenses"
+                    android:textSize="10sp"
+                    android:textColor="@color/card_dark"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <!-- Scanner -->
+            <LinearLayout
+                android:id="@+id/btn_nav_scanner"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/iv_nav_scanner"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_camera"
+                    app:tint="@color/card_dark" />
+                <TextView
+                    android:id="@+id/tv_nav_scanner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Scanner"
+                    android:textSize="10sp"
+                    android:textColor="@color/card_dark"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <!-- Budget -->
+            <LinearLayout
+                android:id="@+id/btn_nav_budget"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/iv_nav_budget"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_budget"
+                    app:tint="@color/card_dark" />
+                <TextView
+                    android:id="@+id/tv_nav_budget"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Budget"
+                    android:textSize="10sp"
+                    android:textColor="@color/card_dark"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <!-- Interest -->
+            <LinearLayout
+                android:id="@+id/btn_nav_interest"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/iv_nav_interest"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_interest"
+                    app:tint="@color/card_dark" />
+                <TextView
+                    android:id="@+id/tv_nav_interest"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Interest"
+                    android:textSize="10sp"
+                    android:textColor="@color/card_dark"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <!-- Report -->
+            <LinearLayout
+                android:id="@+id/btn_nav_report"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/iv_nav_report"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_report"
+                    app:tint="@color/card_dark" />
+                <TextView
+                    android:id="@+id/tv_nav_report"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Report"
+                    android:textSize="10sp"
+                    android:textColor="@color/card_dark"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+            <!-- Profile -->
+            <LinearLayout
+                android:id="@+id/btn_nav_profile"
+                android:layout_width="70dp"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:background="?attr/selectableItemBackground">
+                <ImageView
+                    android:id="@+id/iv_nav_profile"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_profile"
+                    app:tint="@color/card_dark" />
+                <TextView
+                    android:id="@+id/tv_nav_profile"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Profile"
+                    android:textSize="10sp"
+                    android:textColor="@color/card_dark"
+                    android:maxLines="1" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </HorizontalScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

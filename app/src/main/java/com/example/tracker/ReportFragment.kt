@@ -123,19 +123,23 @@ class ReportFragment : Fragment() {
         txtDescription.text = expense.description
         txtAmount.text = String.format(Locale.getDefault(), "R%.2f", expense.amount)
 
-        // FIXED: Decode Base64 string to native byte layout structure
+        // Robust decoding and rendering logic for expense images
         if (!expense.photoUri.isNullOrEmpty()) {
+            imgExpense.visibility = View.VISIBLE
             try {
-                imgExpense.visibility = View.VISIBLE
-                val imageBytes = Base64.decode(expense.photoUri, Base64.DEFAULT)
+                val base64String = expense.photoUri.trim()
+                // Ensure we handle potential data URIs or whitespace gracefully
+                val pureBase64 = if (base64String.contains(",")) base64String.substringAfter(",") else base64String
+                val imageBytes = Base64.decode(pureBase64, Base64.DEFAULT)
 
                 Glide.with(this)
                     .asBitmap()
                     .load(imageBytes)
+                    .error(android.R.drawable.ic_menu_report_image) // Fallback if Glide fails
                     .into(imgExpense)
             } catch (e: Exception) {
-                e.printStackTrace()
-                imgExpense.visibility = View.GONE
+                android.util.Log.e("ReportFragment", "Failed to decode image Base64", e)
+                imgExpense.setImageResource(android.R.drawable.ic_menu_gallery)
             }
         } else {
             imgExpense.visibility = View.GONE

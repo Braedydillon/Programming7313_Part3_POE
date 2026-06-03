@@ -46,7 +46,7 @@ class HomeFragment : Fragment() {
         recentActivityContainer = view.findViewById(R.id.recent_activity_container)
 
         view.findViewById<View>(R.id.card_pie_chart).setOnClickListener {
-            (activity as? Home)?.navigateToReport()
+            (activity as? Home)?.replaceFragment(ReportFragment())
         }
 
         view.findViewById<View>(R.id.btn_quick_add).setOnClickListener {
@@ -149,21 +149,24 @@ class HomeFragment : Fragment() {
 
         val img = itemView.findViewById<ImageView>(R.id.imgExpense)
 
-        // FIXED: Decode string byte layouts for dashboard recent list items natively
+        // Robust decoding for dashboard recent activity
         if (!expense.photoUri.isNullOrEmpty()) {
+            img.visibility = View.VISIBLE
             try {
-                img.visibility = View.VISIBLE
                 val heightInPx = (120 * resources.displayMetrics.density).toInt()
                 img.layoutParams.height = heightInPx
 
-                val imageBytes = Base64.decode(expense.photoUri, Base64.DEFAULT)
+                val base64String = expense.photoUri.trim()
+                val pureBase64 = if (base64String.contains(",")) base64String.substringAfter(",") else base64String
+                val imageBytes = Base64.decode(pureBase64, Base64.DEFAULT)
 
                 Glide.with(this)
                     .asBitmap()
                     .load(imageBytes)
+                    .error(android.R.drawable.ic_menu_gallery)
                     .into(img)
             } catch (e: Exception) {
-                e.printStackTrace()
+                android.util.Log.e("HomeFragment", "Dashboard image decode failed", e)
                 img.visibility = View.GONE
             }
         } else {
