@@ -107,23 +107,23 @@ Stores spending targets, including:
 
 **Application Screens**
 The following screenshots demonstrate the main functionality of the application:
+Register Screen 
+<img width="400" height="886" alt="image" src="https://github.com/user-attachments/assets/ce9775e8-f326-4955-8aef-e73c5cad4d7d" />
+
 Login Screen
-<img width="387" height="680" alt="e3fd377b-91d3-45ec-9e6c-be0644bd378a" src="https://github.com/user-attachments/assets/332bca79-a6e4-48c9-aa54-407429bf44a1" />
+<img width="387" height="680" alt="image" src="https://github.com/user-attachments/assets/9b3c0a64-baee-4ad7-b552-f5b83a9fd646" />
 
 Dashboard Screen
-<img width="269" height="468" alt="image" src="https://github.com/user-attachments/assets/2314e5e2-e637-4ba6-b420-ce5a1ab0a047" />
+<img width="403" height="890" alt="image" src="https://github.com/user-attachments/assets/296ee9a7-339e-4ddf-9bf1-a5ecdc603ab1" />
 
-Add Expense Screen
-<img width="271" height="472" alt="image" src="https://github.com/user-attachments/assets/d560f16a-e849-4818-99bd-80694d0df41b" />
-
-Category Management Screen
-<img width="271" height="472" alt="image" src="https://github.com/user-attachments/assets/2e32ebfe-831d-4e1f-bc6e-26b8d40658e4" />
+Add Expense & Category Management Screen
+<img width="403" height="892" alt="image" src="https://github.com/user-attachments/assets/a2bb3b27-36f7-476e-972a-a3ffc5797568" />
 
 Spending Analysis Screen
-<img width="268" height="470" alt="image" src="https://github.com/user-attachments/assets/8bd2b8a7-ed6d-456a-886e-aa809106895a" />
+<img width="403" height="888" alt="image" src="https://github.com/user-attachments/assets/52b21651-be37-4763-b444-efe5f884f829" />
 
 Budget Progress Screen
-<img width="268" height="470" alt="image" src="https://github.com/user-attachments/assets/2473c9cc-44a9-4ba1-9974-f3d96046cd54" />
+<img width="405" height="892" alt="image" src="https://github.com/user-attachments/assets/2787b1d1-19f1-4239-a596-4f9c6e04e005" />
 
 **Navigation Structure**
 The application follows the navigation path shown below:
