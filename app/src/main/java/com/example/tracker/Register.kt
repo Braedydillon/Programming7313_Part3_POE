@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +21,7 @@ class Register : AppCompatActivity() {
     private lateinit var editTextTextPassword2: EditText
     private lateinit var editTextTextPassword3: EditText
     private lateinit var button2: Button
-    private lateinit var button3: Button
+    private lateinit var button3: TextView
 
     private lateinit var auth: FirebaseAuth
 

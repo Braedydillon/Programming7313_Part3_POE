@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -17,7 +18,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var editTextText: EditText
     private lateinit var editTextTextPassword: EditText
     private lateinit var button: Button
-    private lateinit var textView: Button
+    private lateinit var textView: TextView
 
     // 2. Swapped Room Database for Firebase Auth
     private lateinit var auth: FirebaseAuth
@@ -33,7 +34,7 @@ class MainActivity : AppCompatActivity() {
         editTextText = findViewById(R.id.editTextText)
         editTextTextPassword = findViewById(R.id.editTextTextPassword)
         button = findViewById(R.id.button)
-        textView = findViewById(R.id.textView)
+        textView = findViewById(R.id.tvRegisterRedirect)
 
         button.setOnClickListener {
             loginUser()

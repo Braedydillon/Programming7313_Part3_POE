@@ -4,13 +4,8 @@
         <shape>
             <gradient
                 android:angle="50"
-                android:startColor="@color/white"
-                android:endColor="@color/black"/>
+                android:startColor="@color/bg_blue"
+                android:endColor="@color/white"/>
         </shape>
     </item>
-
-    <item
-        android:gravity="center"
-        android:drawable="@drawable/cacheflow"/>
-
 </layer-list>

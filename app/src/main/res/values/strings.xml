@@ -39,4 +39,13 @@
     <string name="you_can_filter_by_start_and_end_date_or_just_name">You can filter by start and end date or just name</string>
     <string name="please_enter_your_password">Please enter your password</string>
     <string name="please_enter_your_name">Please enter your name</string>
+    <string name="welcome_to_cacheflow">Welcome to CacheFlow</string>
+    <string name="create_account">Create Account</string>
+    <string name="please_enter_your_email">Please enter your email</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="welcome_please_log_in_to_continue">Welcome! please log in to continue</string>
+    <string name="log_in">Log In</string>
+    <string name="don_t_have_an_account_click_to_register">Don\'t have an account? Click to register</string>
+    <string name="already_have_an_account_log_in">Already have an account? Log in</string>
 </resources>
