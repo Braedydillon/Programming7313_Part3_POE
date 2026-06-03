@@ -108,28 +108,26 @@ Stores spending targets, including:
 **Application Screens**
 The following screenshots demonstrate the main functionality of the application:
 Register Screen 
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/ce9775e8-f326-4955-8aef-e73c5cad4d7d" />
+<img width="384" height="682" alt="Screenshot 2026-06-03 152231" src="https://github.com/user-attachments/assets/c09eb15c-fa8e-44ac-a156-230cfc891bfc" />
 
 Login Screen
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/9b3c0a64-baee-4ad7-b552-f5b83a9fd646" />
+<img width="387" height="680" alt="Screenshot 2026-06-03 152212" src="https://github.com/user-attachments/assets/fb79e7e1-1f1a-4566-a171-dfb65430bd7d" />
 
 Dashboard Screen
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/296ee9a7-339e-4ddf-9bf1-a5ecdc603ab1" />
+<img width="403" height="890" alt="Screenshot 2026-06-03 193105" src="https://github.com/user-attachments/assets/e7bf982d-9ecc-409f-8edf-1a19a64c27dc" />
 
 Add Expense & Category Management Screen
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/a2bb3b27-36f7-476e-972a-a3ffc5797568" />
+<img width="403" height="892" alt="Screenshot 2026-06-03 193117" src="https://github.com/user-attachments/assets/2b26f81c-ca7b-4626-a8a5-d061d54a5d86" />
 
 Spending Analysis Screen
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/52b21651-be37-4763-b444-efe5f884f829" />
-
-Budget Progress Screen
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/2787b1d1-19f1-4239-a596-4f9c6e04e005" />
+<img width="403" height="888" alt="Screenshot 2026-06-03 193223" src="https://github.com/user-attachments/assets/dfdf5b71-aa8d-4a0a-a8f3-fd7aa763c5d3" />
 
 Interest Calculator
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/a93b971c-552c-4ad5-9ec8-e151349483d3" />
+<img width="405" height="890" alt="Screenshot 2026-06-03 193210" src="https://github.com/user-attachments/assets/8863e4b7-f8e6-4b85-bbbe-8c85bf8783c0" />
 
 Photo Scanner
-<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/7c1d0a6e-c07b-425f-b07f-22202a9c160e" />
+<img width="411" height="862" alt="Screenshot 2026-06-03 193129" src="https://github.com/user-attachments/assets/018bbab5-4c7d-4d9c-90e8-a444a0549a27" />
+
 
 **Navigation Structure**
 The application follows the navigation path shown below:
