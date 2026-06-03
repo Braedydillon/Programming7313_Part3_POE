@@ -108,22 +108,28 @@ Stores spending targets, including:
 **Application Screens**
 The following screenshots demonstrate the main functionality of the application:
 Register Screen 
-<img width="400" height="886" alt="image" src="https://github.com/user-attachments/assets/ce9775e8-f326-4955-8aef-e73c5cad4d7d" />
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/ce9775e8-f326-4955-8aef-e73c5cad4d7d" />
 
 Login Screen
-<img width="387" height="680" alt="image" src="https://github.com/user-attachments/assets/9b3c0a64-baee-4ad7-b552-f5b83a9fd646" />
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/9b3c0a64-baee-4ad7-b552-f5b83a9fd646" />
 
 Dashboard Screen
-<img width="403" height="890" alt="image" src="https://github.com/user-attachments/assets/296ee9a7-339e-4ddf-9bf1-a5ecdc603ab1" />
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/296ee9a7-339e-4ddf-9bf1-a5ecdc603ab1" />
 
 Add Expense & Category Management Screen
-<img width="403" height="892" alt="image" src="https://github.com/user-attachments/assets/a2bb3b27-36f7-476e-972a-a3ffc5797568" />
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/a2bb3b27-36f7-476e-972a-a3ffc5797568" />
 
 Spending Analysis Screen
-<img width="403" height="888" alt="image" src="https://github.com/user-attachments/assets/52b21651-be37-4763-b444-efe5f884f829" />
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/52b21651-be37-4763-b444-efe5f884f829" />
 
 Budget Progress Screen
-<img width="405" height="892" alt="image" src="https://github.com/user-attachments/assets/2787b1d1-19f1-4239-a596-4f9c6e04e005" />
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/2787b1d1-19f1-4239-a596-4f9c6e04e005" />
+
+Interest Calculator
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/a93b971c-552c-4ad5-9ec8-e151349483d3" />
+
+Photo Scanner
+<img width="200" height="443" alt="image" src="https://github.com/user-attachments/assets/7c1d0a6e-c07b-425f-b07f-22202a9c160e" />
 
 **Navigation Structure**
 The application follows the navigation path shown below:
